@@ -8,7 +8,6 @@ export const GlobalStyle = createGlobalStyle`
 
     :focus {
       outline: 0;
-      /* verificar o box-shadow depois */ 
     }
 
     body { 
