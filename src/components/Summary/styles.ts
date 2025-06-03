@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 
-export const SummaryContainer = styled.section`
-  max-width: 864px;
+export const SummaryContainer = styled.div`
+   max-width: 864px;
   width: 100%;
   height: 212px;
   display: flex;
@@ -10,31 +10,24 @@ export const SummaryContainer = styled.section`
   border-radius: 10px;
   padding: 2rem;
   gap: 2rem;
-
   img {
     border-radius: 10px;
   }
-
   div {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-
-
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-
-
       h1 {
         font-weight: 700;
         font-size: 1.5rem;
         line-height: 130%;
       }
-
       a {
         font-weight: 700;
         font-size: 0.75rem;
@@ -58,8 +51,6 @@ export const SummaryContainer = styled.section`
         word-wrap: break-word;
       }
     }
-
-
     footer {
       display: flex;
       height: 100%;
@@ -75,8 +66,40 @@ export const SummaryContainer = styled.section`
         }
       }
     }
+    footer span i {
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+  }
+  @media (max-width:680px) {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (max-width: 450px) {
+    div {
+      header {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      main {
+        p {
+          text-align: center;
+        }
+      }
+      footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center ;
+      }
+    }
   }
 `;
+
 
 
 

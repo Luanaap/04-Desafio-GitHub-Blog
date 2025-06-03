@@ -1,75 +1,58 @@
+import { useEffect, useState } from "react";
 import { Summary } from "../../components/Summary";
-import { PostCardContainer } from "./components/PostCard/styles";
-import { SearchForm } from "./components/SearchForm";
-import { ListSection } from "./styles";
+import { HomeContainer, HomeContent, ListSection, SearchForm } from "./styles";
+import { api } from "../../lib/axios";
+import { PostCard } from "./components/PostCard";
+
+export interface Post {
+  title: string;
+  body: string;
+  created_at: string;
+  number: number;
+}
+
 
 export function Blog(){
+  const [posts, setPosts] = useState<Post[]>([] as Post[]);
+  const [postsCounter, setPostsCounter] = useState(0);
+
+  async function fetchPosts(query = "") {
+    const response = await api.get(`search/issues?q=${query ? query :  ""
+      }%20repo:${"Luanaap"}/04-Desafio-GitHub-Blog`
+    );
+    setPosts(response.data.items);
+    setPostsCounter(response.data.total_count);
+  }
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   return (
-    <div>
+    <HomeContainer>
       <Summary/>
-       <SearchForm/>
-
-      <ListSection>
-        <PostCardContainer>
-          <header>
-            <h1>JavaScript data types and data structures</h1>
-            <span>Há 1 dia</span>
-          </header>
-          <main>
-            <p>Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.</p>
-          </main>
-        </PostCardContainer>
-         <PostCardContainer>
-          <header>
-            <h1>JavaScript data types and data structures</h1>
-            <span>Há 1 dia</span>
-          </header>
-          <main>
-            <p>Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.</p>
-          </main>
-        </PostCardContainer>
-         <PostCardContainer>
-          <header>
-            <h1>JavaScript data types and data structures</h1>
-            <span>Há 1 dia</span>
-          </header>
-          <main>
-            <p>Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.</p>
-          </main>
-        </PostCardContainer>
-         <PostCardContainer>
-          <header>
-            <h1>JavaScript data types and data structures</h1>
-            <span>Há 1 dia</span>
-          </header>
-          <main>
-            <p>Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.</p>
-          </main>
-        </PostCardContainer>
-         <PostCardContainer>
-          <header>
-            <h1>JavaScript data types and data structures</h1>
-            <span>Há 1 dia</span>
-          </header>
-          <main>
-            <p>Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.</p>
-          </main>
-        </PostCardContainer>
-         <PostCardContainer>
-          <header>
-            <h1>JavaScript data types and data structures</h1>
-            <span>Há 1 dia</span>
-          </header>
-          <main>
-            <p>Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.</p>
-          </main>
-        </PostCardContainer>
-        
-
-       
-        
-      </ListSection>
-    </div>
+      <HomeContent>
+        <SearchForm>
+          <div>
+            <span>Publicações</span>
+            <small>{postsCounter} publicações</small>
+          </div>
+          <input
+            type="text"
+            placeholder="Buscar conteúdo"
+            onBlur={(e) => fetchPosts(e.target.value)}
+          />
+        </SearchForm>
+        <ListSection>
+          {posts &&
+          posts.map((post) => (
+            <PostCard 
+              key={`${post.title}-${post.number}`}
+              post={post}>
+            </PostCard>
+          ))}
+        </ListSection>
+      </HomeContent>
+    </HomeContainer>
   )
 }

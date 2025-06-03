@@ -1,12 +1,50 @@
+import { useEffect, useState } from "react";
 import {
   NavButton,
   PostDetailCard,
   PostDetailContainer,
   PostDetailContent,
 } from "./styles";
+import ReactMarkdown from "react-markdown";
+import { useParams } from "react-router-dom";
+import { api } from "../../../../lib/axios";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import remarkGfm from "remark-gfm";
 
+interface PostDetail {
+  title: string;
+  comments: number;
+  createdAt: string;
+  gitHubUserName: string;
+  url: string;
+  body: string;
+}
 
 export function PostDetail() {
+  const [ posts, setPosts ] = useState<PostDetail>({} as PostDetail);
+  const { id } = useParams();
+
+  async function fetchPost() {
+    const response = await api.get(`/repos/Luanaap/04-Desafio-GitHub-Blog/issues/${id}`);
+    const { title, comments, created_at, user, html_url, body } = response.data;
+    const newPostObj = {
+      title,
+      gitHubUserName: user.login,
+      comments,
+      createdAt: formatDistanceToNow(new Date(created_at), {
+        locale: ptBR,
+        addSuffix: true,
+      }),
+      url: html_url,
+      body,
+    }
+    setPosts(newPostObj);
+  }
+
+  useEffect(() => {
+    fetchPost();
+  }, [])
 
   return (
     <PostDetailContainer>
@@ -16,37 +54,35 @@ export function PostDetail() {
             <i className="fa-solid fa-chevron-left"></i>
             Voltar
           </NavButton>
-          <div>
-            Ver no Github
+          <a href={posts.url} target="_blank">
+            Ver no GitHub
             <i className="fa-solid fa-arrow-up-right-from-square"></i>
-          </div>
+          </a>
         </header>
         <div>
-          <h1>JavaScript data types and data structures</h1>
+          <h1>{posts.title}</h1>
         </div>
         <footer>
           <span>
             <i className="fa-brands fa-github"></i>
-            cameronwll
+            {posts.gitHubUserName}
           </span>
-          <span>
+           <span>
             <i className="fa-solid fa-calendar"></i>
-            Há 1 dia
+            {posts.createdAt}
           </span>
-          <span>
+           <span>
             <i className="fa-solid fa-comment"></i>
-            5 comentários
+            {posts.comments} comentários
           </span>
-        </footer>
+        </footer>  
       </PostDetailCard>
+
       <PostDetailContent>
         <div>
-          Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.
-
-Dynamic typing
-JavaScript is a loosely typed and dynamic language. Variables in JavaScript are not directly associated with any particular value type, and any variable can be assigned (and re-assigned) values of all types:
-
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{posts.body}</ReactMarkdown>
         </div>
+      
       </PostDetailContent>
     </PostDetailContainer>
   );
